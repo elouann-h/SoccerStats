@@ -26,15 +26,29 @@
 import json
 
 
-SYMBOLS = ["but", "tc", "tnc", "/", "to", "gd"]
+SYMBOLS = ["bu", "tc", "tnc", "/", "to", "gd"]
 
 
 def starts_with_a_symbol(string):
-    return any(string.startswith(symbol) for symbol in SYMBOLS)
+    includes = False
+    try:
+        for symbol in SYMBOLS:
+            if symbol in string.split(" ")[0]:
+                includes = True
+    except IndexError:
+        pass
+    return includes
 
 
 def ends_with_a_symbol(string):
-    return any(string.endswith(symbol) for symbol in SYMBOLS)
+    includes = False
+    try:
+        for symbol in SYMBOLS:
+            if symbol in string.split(" ")[1]:
+                includes = True
+    except IndexError:
+        pass
+    return includes
 
 
 def get_symbol(string):
@@ -97,7 +111,7 @@ for action in STATS_FILE.read().splitlines():
             stats_per_player[get_player(move)] = {"played": 1}
 
         if starts_with_a_symbol(move) or ends_with_a_symbol(move):
-            if get_symbol(move) == "but":
+            if get_symbol(move) == "bu":
                 assistant = get_player(PLAYER_MOVES[moveIndex - 1])
                 if assistant in stats_per_player:
                     if "assist" in stats_per_player[assistant]:
@@ -145,7 +159,38 @@ stats_json, passes_json = json.load(STATS_RENDERING_FILE), json.load(PASSES_REND
 
 STATS_CSV, PASSES_CSV = open("stats_rendering.csv", "w+"), open("passes_rendering.csv", "w+")
 
-stats_csv_table = "[Numéro joueur],Ballons joués,Ballons perdus,% de passe,Ballons récupérés,Tirs,Tirs cadrés,Passes décisives,Buts\n"
+passes_csv_table = f"[Numéro joueur],{','.join([player for player in all_players])}\n"
+for player in all_players:
+    passes_csv_table += f"{player}"
+    total_passes = 0
+    for receiver in all_players:
+        passes_done_to_receiver = 0
+
+        if player in passes_json['given']:
+            if receiver in passes_json["given"][player]:
+                passes_done_to_receiver = passes_json["given"][player][receiver]
+
+        total_passes += passes_done_to_receiver
+
+        if player == receiver:
+            passes_done_to_receiver = "XXX"
+
+        passes_csv_table += f",{passes_done_to_receiver}"
+    passes_csv_table += "\n"
+
+    if "total" in passes_json:
+        if player in passes_json["total"]:
+            passes_json["total"][player] = total_passes
+        else:
+            passes_json["total"][player] = total_passes
+    else:
+        passes_json["total"] = {player: total_passes}
+
+
+PASSES_CSV.write(passes_csv_table)
+
+
+stats_csv_table = "[Numéro joueur],Ballons joués,Ballons perdus,% de passe,Total de passes,Ballons récupérés,Tirs,Tirs cadrés,Passes décisives,Buts\n"
 for player in all_players:
     stats_csv_table += f"{player}"
     played, lost, recovered, shots_on_target, shots_not_in_target, assists, goals = 0, 0, 0, 0, 0, 0, 0
@@ -163,29 +208,12 @@ for player in all_players:
             shots_not_in_target = stats_json[player]["tnc"]
         if "assist" in stats_json[player]:
             assists = stats_json[player]["assist"]
-        if "but" in stats_json[player]:
-            goals = stats_json[player]["but"]
+        if "bu" in stats_json[player]:
+            goals = stats_json[player]["bu"]
 
     passes_percent = (100 - lost * 100 / played) if played > 0 else 0
     shots = shots_on_target + (shots_not_in_target - shots_on_target)
+    total_passes = passes_json["total"][player]
 
-    stats_csv_table += f",{played},{lost},{passes_percent},{recovered},{shots},{shots_on_target},{assists},{goals}\n"
+    stats_csv_table += f",{played},{lost},{passes_percent},{total_passes},{recovered},{shots},{shots_on_target},{assists},{goals}\n"
 STATS_CSV.write(stats_csv_table)
-
-passes_csv_table = f"[Numéro joueur],{','.join([player for player in all_players])}\n"
-for player in all_players:
-    passes_csv_table += f"{player}"
-    for receiver in all_players:
-        passes_done_to_receiver = 0
-
-        if player in passes_json['given']:
-            if receiver in passes_json["given"][player]:
-                passes_done_to_receiver = passes_json["given"][player][receiver]
-
-        if player == receiver:
-            passes_done_to_receiver = "XXX"
-
-        passes_csv_table += f",{passes_done_to_receiver}"
-    passes_csv_table += "\n"
-
-PASSES_CSV.write(passes_csv_table)

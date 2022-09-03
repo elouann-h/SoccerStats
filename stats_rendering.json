@@ -7,14 +7,18 @@
     },
     "11": {
         "played": 3,
-        "recovered": 1
+        "assist": 1,
+        "recovered": 1,
+        "bu": 1
     },
     "14": {
-        "played": 1
+        "played": 1,
+        "bu": 1
     },
     "9": {
         "played": 4,
-        "tc": 1
+        "tc": 1,
+        "assist": 1
     },
     "8": {
         "played": 3
