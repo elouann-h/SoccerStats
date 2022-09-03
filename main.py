@@ -147,15 +147,8 @@ STATS_CSV, PASSES_CSV = open("stats_rendering.csv", "w+"), open("passes_renderin
 
 stats_csv_table = "[Numéro joueur],Ballons joués,Ballons perdus,% de passe,Ballons récupérés,Tirs,Tirs cadrés,Passes décisives,Buts\n"
 for player in all_players:
-    print(player)
     stats_csv_table += f"{player}"
-    played = 0
-    lost = 0
-    recovered = 0
-    shots_on_target = 0
-    shots_not_in_target = 0
-    assists = 0
-    goals = 0
+    played, lost, recovered, shots_on_target, shots_not_in_target, assists, goals = 0, 0, 0, 0, 0, 0, 0
 
     if player in stats_json:
         if "played" in stats_json[player]:

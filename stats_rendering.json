@@ -1,18 +1,41 @@
 {
-    "11": {
-        "recovered": 1,
-        "played": 1
-    },
     "10": {
-        "played": 2
+        "recovered": 2,
+        "played": 5,
+        "/": 1,
+        "tnc": 1
+    },
+    "11": {
+        "played": 3,
+        "recovered": 1
+    },
+    "14": {
+        "played": 1
     },
     "9": {
-        "played": 1
+        "played": 4,
+        "tc": 1
+    },
+    "8": {
+        "played": 3
     },
     "6": {
         "played": 1
     },
     "7": {
+        "played": 2
+    },
+    "4": {
+        "recovered": 2,
+        "played": 2,
+        "gd": 1,
+        "to": 1
+    },
+    "12": {
+        "played": 1
+    },
+    "5": {
+        "recovered": 1,
         "played": 1
     }
 }
