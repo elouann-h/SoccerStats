@@ -1,1 +1,10 @@
-11-10-9-10-6-7 bu
+* Symboles: But=but, Tir cadré=tc, Tir Non Cadré=tnc, Ballon perdu =/, touche=to,geste défensif=gd
+*
+* Exemples
+*
+* 10-11-14 bu
+* 10-9-8-6-8-7-10 /
+* 4 gd
+* 11-12-10-9 tc
+* to 4-8-9-10 tnc
+* 5-7-9-11 bu
